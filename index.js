@@ -9,6 +9,7 @@ program
 program.parse();
 
 const options = program.opts();
+
 if (!options.input) {
     console.error('Please, specify input file');
     process.exit(1);
@@ -19,12 +20,15 @@ fs.readFile(options.input, 'utf8', (err, data) => {
         console.error('Cannot read input file');
         process.exit(1);
     }
-    if (options.output) {fs.writeFile(options.output, data, (err) => {
+    let jsonData;
+    jsonData = JSON.parse(data);
+    const result = jsonData.map(entry => `${entry.exchangedate}:${entry.rate}`).join('\n');
+    if (options.output) {fs.writeFile(options.output, result, (err) => {
         if (err) {
             console.error('Cannot write input file');
         }
     })}
     if (options.display) {
-        console.log(data);
+        console.log(result);
     }
 })
