@@ -15,20 +15,27 @@ if (!options.input) {
     process.exit(1);
 }
 
-fs.readFile(options.input, 'utf8', (err, data) => {
-    if (err) {
-        console.error('Cannot read input file');
-        process.exit(1);
-    }
+let data;
+try {
+    data = fs.readFileSync(options.input, 'utf8');
+} catch (error) {
+    console.error('Cannot read input file');
+    process.exit(1);
+}
+
     let jsonData;
     jsonData = JSON.parse(data);
     const result = jsonData.map(entry => `${entry.exchangedate}:${entry.rate}`).join('\n');
-    if (options.output) {fs.writeFile(options.output, result, (err) => {
-        if (err) {
-            console.error('Cannot write input file');
-        }
-    })}
+
+if (options.output) {
+    try {
+        fs.writeFileSync(options.output, result, 'utf8');
+    } catch (error) {
+        console.error('Cannot write to output file');
+        process.exit(1);
+    }
+}
+
     if (options.display) {
         console.log(result);
     }
-})
